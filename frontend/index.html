@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Medico - Portale Pazienti</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="flex-between">
+                <div>
+                    <h1>🏥 Studio Medico</h1>
+                    <p>Portale Pazienti</p>
+                </div>
+                <button onclick="logout()" class="btn btn-secondary">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Alert messages -->
+        <div id="alert-container"></div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="active" onclick="showTab('prenota')">Prenota Appuntamento</button>
+            <button onclick="showTab('appuntamenti')">I Miei Appuntamenti</button>
+            <button onclick="showTab('storico')">Storico Visite</button>
+        </div>
+
+        <!-- Tab: Prenota Appuntamento -->
+        <div id="tab-prenota" class="tab-content">
+            <div class="card">
+                <h2>Prenota un Nuovo Appuntamento</h2>
+                
+                <form id="booking-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="specializzazione">Specializzazione *</label>
+                            <select id="specializzazione" required>
+                                <option value="">Seleziona specializzazione</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo-visita">Tipo di Visita *</label>
+                            <select id="tipo-visita" required>
+                                <option value="Prima visita">Prima visita</option>
+                                <option value="Visita di controllo">Visita di controllo</option>
+                                <option value="Visita specialistica">Visita specialistica</option>
+                                <option value="Visita urgente">Visita urgente</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="durata">Durata (minuti) *</label>
+                            <select id="durata" required>
+                                <option value="30">30 minuti</option>
+                                <option value="45">45 minuti</option>
+                                <option value="60">60 minuti</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="note">Note (opzionale)</label>
+                            <textarea id="note" rows="3" placeholder="Eventuali note o richieste particolari"></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Cerca Disponibilità</button>
+                </form>
+
+                <div id="available-slots" class="hidden mt-2">
+                    <h3>Seleziona Data e Orario</h3>
+                    <div id="slots-container" class="slot-grid"></div>
+                    <div class="mt-2 text-right">
+                        <button type="button" class="btn btn-success" onclick="confirmBooking()">Conferma Prenotazione</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: I Miei Appuntamenti -->
+        <div id="tab-appuntamenti" class="tab-content hidden">
+            <div class="card">
+                <h2>I Miei Appuntamenti</h2>
+                <div id="appointments-list">
+                    <div class="loading">Caricamento in corso...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Storico Visite -->
+        <div id="tab-storico" class="tab-content hidden">
+            <div class="card">
+                <h2>Storico delle Mie Visite</h2>
+                <div id="history-list">
+                    <p class="text-center" style="color: var(--secondary);">Caricamento storico...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cancellazione -->
+    <div id="cancel-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Cancella Appuntamento</h3>
+                <button class="modal-close" onclick="closeCancelModal()">×</button>
+            </div>
+            <p>Sei sicuro di voler cancellare questo appuntamento?</p>
+            <p style="color: var(--secondary); font-size: 14px;">È necessario un preavviso di almeno 24 ore.</p>
+            
+            <div class="form-group mt-2">
+                <label>Motivo cancellazione (opzionale)</label>
+                <textarea id="cancel-reason" rows="3"></textarea>
+            </div>
+            
+            <div class="flex gap-1 mt-2">
+                <button class="btn btn-secondary" onclick="closeCancelModal()">Annulla</button>
+                <button class="btn btn-danger" onclick="confirmCancel()">Conferma Cancellazione</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

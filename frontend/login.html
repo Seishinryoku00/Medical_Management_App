@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Studio Medico</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: sans-serif;
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 { text-align: center; color: #2563eb; margin-bottom: 20px; }
+        .user-type-selector { display: flex; gap: 10px; margin-bottom: 20px; }
+        .user-type-btn {
+            flex: 1; padding: 12px; border: 2px solid #e2e8f0;
+            border-radius: 8px; background: white; cursor: pointer; text-align: center;
+            transition: all 0.3s;
+        }
+        .user-type-btn.active { border-color: #2563eb; background: #eff6ff; }
+        .form-group { margin-bottom: 15px; }
+        input { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; }
+        button { width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; }
+        #alert-container { margin-bottom: 15px; text-align: center; }
+        .alert { padding: 10px; border-radius: 6px; margin-bottom: 10px; }
+        .alert-success { background: #d1fae5; color: #065f46; }
+        .alert-error { background: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>🏥 Studio Medico</h1>
+
+        <div id="alert-container"></div>
+
+        <div class="user-type-selector">
+            <button class="user-type-btn active" onclick="selectUserType('patient', this)">Paziente</button>
+            <button class="user-type-btn" onclick="selectUserType('doctor', this)">Medico</button>
+        </div>
+
+        <form id="login-form">
+            <div class="form-group">
+                <input type="email" id="email" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" placeholder="Password" required>
+            </div>
+            <button type="submit">Accedi</button>
+        </form>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:8000";
+        let selectedUserType = "patient";
+
+        function selectUserType(type, btn) {
+            selectedUserType = type;
+            document.querySelectorAll(".user-type-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+        }
+
+        function showAlert(msg, type="error") {
+            const container = document.getElementById("alert-container");
+            container.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+
+        document.getElementById("login-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/login/${selectedUserType}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Salva token e info utente
+                    localStorage.setItem("token", data.access_token);
+                    localStorage.setItem("user_type", data.user_type);
+                    localStorage.setItem("user_id", data.user_id);
+                    localStorage.setItem("user_name", `${data.nome} ${data.cognome}`);
+
+                    showAlert("Login effettuato con successo!", "success");
+
+                    // Redirect
+                    setTimeout(() => {
+                        if (data.user_type === "patient") {
+                            window.location.href = "index.html";
+                        } else {
+                            window.location.href = "admin.html";
+                        }
+                    }, 1000);
+                } else {
+                    showAlert(data.detail || "Credenziali non valide", "error");
+                }
+            } catch (err) {
+                console.error(err);
+                showAlert("Errore connessione al server", "error");
+            }
+        });
+    </script>
+</body>
+</html>

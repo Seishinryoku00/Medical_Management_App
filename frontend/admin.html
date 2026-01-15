@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Medico - Pannello Medico</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="flex-between">
+                <div>
+                    <h1>🏥 Studio Medico - Pannello Medico</h1>
+                    <p>Gestione appuntamenti e pazienti</p>
+                </div>
+                <button onclick="logout()" class="btn btn-secondary">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Alert messages -->
+        <div id="alert-container"></div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="active" onclick="showTab('agenda')">Agenda Giornaliera</button>
+            <button onclick="showTab('appuntamenti')">Tutti gli Appuntamenti</button>
+            <button onclick="showTab('pazienti')">Pazienti</button>
+            <button onclick="showTab('sale')">Sale Visita</button>
+            <button onclick="showTab('attesa')">Lista d'Attesa</button>
+        </div>
+
+        <!-- Tab: Agenda Giornaliera -->
+        <div id="tab-agenda" class="tab-content">
+            <div class="card">
+                <div class="flex-between mb-2">
+                    <h2>Agenda Giornaliera</h2>
+                    <div class="flex gap-1">
+                        <div class="form-group" style="margin: 0; max-width: 200px;">
+                            <select id="agenda-doctor">
+                                <option value="">Seleziona Medico</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin: 0; max-width: 180px;">
+                            <input type="date" id="agenda-date">
+                        </div>
+                        <button onclick="loadAgenda()" class="btn btn-primary">Carica</button>
+                    </div>
+                </div>
+                
+                <div id="agenda-content">
+                    <p class="text-center" style="color: var(--secondary);">Seleziona un medico e una data</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Tutti gli Appuntamenti -->
+        <div id="tab-appuntamenti" class="tab-content hidden">
+            <div class="card">
+                <div class="flex-between mb-2">
+                    <h2>Gestione Appuntamenti</h2>
+                    <div class="flex gap-1">
+                        <div class="form-group" style="margin: 0; max-width: 150px;">
+                            <input type="date" id="filter-date-from" placeholder="Da">
+                        </div>
+                        <div class="form-group" style="margin: 0; max-width: 150px;">
+                            <input type="date" id="filter-date-to" placeholder="A">
+                        </div>
+                        <div class="form-group" style="margin: 0; max-width: 150px;">
+                            <select id="filter-status">
+                                <option value="">Tutti gli stati</option>
+                                <option value="programmato">Programmato</option>
+                                <option value="completato">Completato</option>
+                                <option value="cancellato">Cancellato</option>
+                            </select>
+                        </div>
+                        <button onclick="loadAllAppointments()" class="btn btn-primary">Filtra</button>
+                    </div>
+                </div>
+                
+                <div id="all-appointments-list">
+                    <p class="text-center" style="color: var(--secondary);">Clicca su Filtra per caricare gli appuntamenti</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Pazienti -->
+        <div id="tab-pazienti" class="tab-content hidden">
+            <div class="card">
+                <div class="flex-between mb-2">
+                    <h2>Elenco Pazienti</h2>
+                    <div class="flex gap-1">
+                        <div class="form-group" style="margin: 0; max-width: 250px;">
+                            <input type="text" id="search-patient" placeholder="Cerca per nome, cognome o CF">
+                        </div>
+                        <button onclick="loadPatients()" class="btn btn-primary">Cerca</button>
+                    </div>
+                </div>
+                
+                <div id="patients-list">
+                    <p class="text-center" style="color: var(--secondary);">Usa la ricerca per trovare un paziente</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Sale Visita -->
+        <div id="tab-sale" class="tab-content hidden">
+            <div class="card">
+                <h2>Sale Visita</h2>
+                <div id="rooms-list">
+                    <div class="loading">Caricamento sale...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Lista d'Attesa -->
+        <div id="tab-attesa" class="tab-content hidden">
+            <div class="card">
+                <h2>Lista d'Attesa</h2>
+                <div id="waiting-list">
+                    <div class="loading">Caricamento lista...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Dettagli Paziente -->
+    <div id="patient-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Cartella Paziente</h3>
+                <button class="modal-close" onclick="closePatientModal()">×</button>
+            </div>
+            <div id="patient-details"></div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>

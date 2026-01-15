@@ -1,0 +1,58 @@
+############################
+# PYTHON
+############################
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+.env/
+.env.*
+
+# Packaging
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log
+
+############################
+# SQLALCHEMY / DATABASE
+############################
+# Database locali (SQLite tipico in dev)
+*.db
+*.sqlite
+*.sqlite3
+
+# Dump / backup DB
+*.sql
+*.dump
+*.bak
+
+############################
+# FRONTEND
+############################
+node_modules/
+dist/
+build/
+.cache/
+.tmp/
+
+############################
+# IDE / OS
+############################
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+############################
+# TEST / COVERAGE
+############################
+.coverage
+htmlcov/
+.pytest_cache/

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrazione - Studio Medico</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px 0;
+        }
+        
+        .register-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 600px;
+            padding: 40px;
+        }
+        
+        .register-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .register-header h1 {
+            color: #2563eb;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-header">
+            <h1>🏥 Registrazione Paziente</h1>
+            <p>Crea il tuo account per accedere ai servizi</p>
+        </div>
+
+        <div id="alert-container"></div>
+
+        <form id="register-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nome">Nome *</label>
+                    <input type="text" id="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="cognome">Cognome *</label>
+                    <input type="text" id="cognome" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Telefono *</label>
+                    <input type="tel" id="telefono" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="codice_fiscale">Codice Fiscale *</label>
+                    <input type="text" id="codice_fiscale" required maxlength="16" style="text-transform: uppercase">
+                </div>
+                <div class="form-group">
+                    <label for="data_nascita">Data di Nascita *</label>
+                    <input type="date" id="data_nascita" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="indirizzo">Indirizzo</label>
+                <input type="text" id="indirizzo">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="citta">Città</label>
+                    <input type="text" id="citta">
+                </div>
+                <div class="form-group">
+                    <label for="cap">CAP</label>
+                    <input type="text" id="cap" maxlength="5">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="emergenza_nome">Contatto Emergenza - Nome</label>
+                    <input type="text" id="emergenza_nome">
+                </div>
+                <div class="form-group">
+                    <label for="emergenza_telefono">Contatto Emergenza - Telefono</label>
+                    <input type="tel" id="emergenza_telefono">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="password">Password *</label>
+                    <input type="password" id="password" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Conferma Password *</label>
+                    <input type="password" id="confirm_password" required minlength="6">
+                </div>
+            </div>
+
+            <div class="form-actions mt-2">
+                <button type="submit" class="btn btn-primary btn-full">Registrati</button>
+                <a href="login.html" class="btn btn-secondary btn-full" style="text-align: center; text-decoration: none;">
+                    Hai già un account? Accedi
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+
+        function showAlert(message, type = 'error') {
+            const container = document.getElementById('alert-container');
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+
+            if (password !== confirmPassword) {
+                showAlert('Le password non coincidono');
+                return;
+            }
+
+            const patientData = {
+                nome: document.getElementById('nome').value,
+                cognome: document.getElementById('cognome').value,
+                email: document.getElementById('email').value,
+                password: password,
+                telefono: document.getElementById('telefono').value,
+                codice_fiscale: document.getElementById('codice_fiscale').value.toUpperCase(),
+                data_nascita: document.getElementById('data_nascita').value,
+                indirizzo: document.getElementById('indirizzo').value || null,
+                citta: document.getElementById('citta').value || null,
+                cap: document.getElementById('cap').value || null,
+                contatto_emergenza_nome: document.getElementById('emergenza_nome').value || null,
+                contatto_emergenza_telefono: document.getElementById('emergenza_telefono').value || null
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/auth/register/patient`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(patientData)
+                });
+
+                if (response.ok) {
+                    showAlert('Registrazione completata! Reindirizzamento al login...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    const error = await response.json();
+                    showAlert(error.detail || 'Errore durante la registrazione');
+                }
+            } catch (error) {
+                showAlert('Errore di connessione al server');
+            }
+        });
+    </script>
+</body>
+</html>
